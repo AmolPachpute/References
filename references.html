@@ -1,0 +1,194 @@
+<script>
+
+      $(document).ready(function()
+        {
+             $('<option>',{value:''}).html('select semester').appendTo("#semester_id")
+            $("#stream_id").change(function()
+                {
+
+                    $("#semester_id option ").remove();
+                    var stream = $("#stream_id").val();
+                    $.ajax(
+                        {
+                            type : "GET",
+                            url : "/fms/manage/student_fees/",
+                            data :"sid="+stream ,
+                            success : function(data)
+                            {
+                                if (data)
+                                {
+                                    var res = data.res
+                                    for (i=0;i<res.length;i++)
+                                    {
+                                        $('<option>', {value : res[i].id }).html(res[i].name).appendTo('#semester_id');
+                                    }
+                                }
+
+                            }
+                        }
+                    )
+                });
+        });
+
+function locationscript(event){
+     if (e.keyCode == 13)
+        {
+            skill_info()
+        }
+        else{
+            var search_txt = $('#id_location').val();
+            $('#resultn_id').hide();
+            if (search_txt.length > 0){
+                $.ajax({
+                    type : 'POST',
+                    url : "{% url 'search_location' %}",
+                    data : $('#activity-form').serialize(),
+                    success : function(data){
+                         $('#resultn_id').html(data);
+                         $('#resultn_id').show();
+                    }
+                });
+            }
+        }
+    }
+
+
+    function select_val(send_to_id)
+    {
+        $('#to_member').val($('#' + send_to_id).val());
+        $('#to_member_hidden').val(send_to_id);
+        $("#to_error").html('');
+        return false;
+    }
+
+
+     $('#activity-form').find('label[for="id_strategy"]').show();
+     $('#activity-form').find('select[name=strategy]').addClass('required');
+     $('#activity-form').find('select[name=milestone]').removeAttr('class','required');
+     $('#activity-form').find('select[name=milestone]').hide();
+
+</script>
+
+<script>
+				$(document).ready(function(){
+						$('#zone_id').hide();
+						$('#multiple_ins_id').hide();
+						$('#institution_options').change(function(){
+								$('#select_all_id').hide();
+								$('#ins_id').hide();
+								$('#zone_id').hide();
+								$('#selectZone').val("select");
+								$('#multiple_ins_id').hide();
+								if ($('#institution_options').val() == 'single' || $('#institution_options').val() == 'selected')
+								{
+										$('#zone_id').show();
+								}
+								else
+								{
+										$('#zone_id').hide();
+								}
+
+								});
+
+						$('#zone_id').change(function(){
+								$('#multiple_ins_id').hide();
+								if ($('#institution_options').val() == 'single' || $('#institution_options').val() == 'selected')
+								{
+										$("#institution_id option ").remove();
+										$("#institution_id option ").hide();
+										$('#select_all_id').hide();
+										$('<option>',{value:'select'}).html('Select').appendTo("#institution_id")
+										$.ajax(
+											   {
+														url: "/schools/get-insitutions/",
+														type: "GET",
+														data: { 'zone_id':$('#selectZone').val()},
+														success: function(data)
+														{
+																var res = data.institutions_list
+																if ($('#institution_options').val() == 'single')
+																{
+																		if (!res[0]) {
+																				alert("No institutions found for this zone.Please select another zone");
+																				$('#selectZone').val("select");
+																		}
+																		else
+																		{
+																				for (i=0;i<res.length;i++)
+																				{
+																					$('<option>', {value : res[i].id }).html(res[i].name).appendTo('#institution_id');
+																				}
+																		}
+																}
+																else
+																{
+																		var st="";
+																		if (!res[0]) {
+																				alert("No institutions found for this zone.Please select another zone");
+																				$('#selectZone').val("select");
+																		}
+																		else
+																		{
+																				for (i=0;i<res.length;i++)
+																				{
+																						st = st + "<input type='checkbox' name='ins_ids' value='" + res[i].id + "'>" + res[i].name + "<br>"
+																				}
+																				var el = document.getElementById('multiple_ins_id1');
+																				el.innerHTML = st;
+																				$('#multiple_ins_id').show();
+																				$('#select_all_id').show();
+
+																		}
+
+
+																}
+														}
+												})
+								}
+
+
+								});
+						});
+</script>
+
+<script>
+        $(document).ready(function(){
+                $('#select_all_id').hide();
+                $('#select_all').click(function(){
+                      if(this.checked) {
+                                // Iterate each checkbox
+                                $(':checkbox').each(function() {
+                                    this.checked = true;
+                                });
+                            }
+                      else {
+                        $(':checkbox').each(function() {
+                              this.checked = false;
+                          });
+                            }
+
+                        })
+
+                });
+</script>
+
+
+
+
+
+ <script>
+        $(document).ready(function(){
+            $("#activity_status_form").validate({
+                rules : {
+                    name : {required : true,},
+                    primary_contact_no : { required: true ,number:true,maxlength:10,minlength:10},
+                    postal_code: { required: true ,number:true,maxlength:6,minlength:6},
+                    country: { required: true },
+                    email :{email:true},
+                },
+                 submitHandler : function (){
+                        return ajaxformsubmit($('#activity_status_form'), $('#post_url').val(), 'post', 'activity-status', '/projects/main-data/');
+                  },
+            });
+        });
+</script>
