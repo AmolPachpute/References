@@ -192,3 +192,63 @@ function locationscript(event){
             });
         });
 </script>
+
+
+
+{% ifequal update True %}
+    <form action="{%url 'update_ticket' %}?id={{ instance.id }}" method="POST">
+{% else %}
+ <form action="{%url 'raise_ticket' %}" method="POST">
+{% endifequal %}
+{% csrf_token %}
+
+{% if errors %}
+    {%for i in errors.values %}
+     <p style="color:green;" ><h1 style="color:red">{{i}}</h1></p>
+     {% endfor %}
+{% endif %}
+
+
+{% if record_added%}
+            <p><h3 style="color:green;">record added successfully</h1></p>
+            <script>
+                setTimeout(function(){window.parent.location="{% url 'home' %}"}, 1000);s
+            </script>
+{% elif record_updated %}
+            <p><h3 style="color:green;">record  updated successfully</h1></p>
+            <script>
+                setTimeout(function(){window.parent.location="{% url 'home' %}";}, 1000);
+            </script>
+{% else %}
+
+    <table border="0" cellspacing="5" cellpadding="5" style="width:620px;text-align:left;">
+                {% for field in form %}
+                <tr>
+                  <td><h3>{{ field.label_tag }} </h3><p></p><p></p></td>
+                  <td>{{ field }}
+                  {% if field.help_text %}
+                    {{ field.help_text }}
+                {% endif %}
+                </td>
+                </tr>
+                {% if field.errors %}
+                <tr>
+                  <td></td>
+                <td style="color:red;">{{ field.errors|striptags }}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+                {% if form.non_field_errors %}
+                {% for i in form.non_field_errors%}
+                 <p style="color:red"> {{i}}</p>
+                {% endfor %}
+                {% endif %}
+    </table>
+    {% ifequal update True %}<input type="submit" value="Update">
+{% else %}
+        <input type="submit" value="Add">
+    {% endifequal %}
+
+
+{% endif %}
+</form>
