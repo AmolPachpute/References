@@ -252,3 +252,7 @@ function locationscript(event){
 
 {% endif %}
 </form>
+
+from django.forms.fields import DateField
+date1 = DateField()
+start_date = date1.to_python(s_date)
